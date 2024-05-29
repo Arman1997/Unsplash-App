@@ -20,6 +20,7 @@
 		56956C142C07DFC700470F28 /* PhotosDashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56956C132C07DFC700470F28 /* PhotosDashboardViewModel.swift */; };
 		56956C162C07DFF700470F28 /* PhotosDashboardViewDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56956C152C07DFF700470F28 /* PhotosDashboardViewDescriptor.swift */; };
 		56956C182C07E00800470F28 /* PhotosDashboardDescriptorMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56956C172C07E00800470F28 /* PhotosDashboardDescriptorMapper.swift */; };
+		56956C1B2C07E60400470F28 /* LayoutProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56956C1A2C07E60400470F28 /* LayoutProxy.swift */; };
 		5979B634A1EE944B2F93FEFD /* Pods_Unsplash_AppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E9F78D7B826EB11DDE3B91 /* Pods_Unsplash_AppTests.framework */; };
 		BFA4D0728BC7013D670E8891 /* Pods_Unsplash_App_Unsplash_AppUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF72B650D284A893FACCC8B3 /* Pods_Unsplash_App_Unsplash_AppUITests.framework */; };
 		E9D5BF37F851AAD19431FB96 /* Pods_Unsplash_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00371CBF8DCEFD661F2BC7C4 /* Pods_Unsplash_App.framework */; };
@@ -63,6 +64,7 @@
 		56956C132C07DFC700470F28 /* PhotosDashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosDashboardViewModel.swift; sourceTree = "<group>"; };
 		56956C152C07DFF700470F28 /* PhotosDashboardViewDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosDashboardViewDescriptor.swift; sourceTree = "<group>"; };
 		56956C172C07E00800470F28 /* PhotosDashboardDescriptorMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosDashboardDescriptorMapper.swift; sourceTree = "<group>"; };
+		56956C1A2C07E60400470F28 /* LayoutProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutProxy.swift; sourceTree = "<group>"; };
 		59E9F78D7B826EB11DDE3B91 /* Pods_Unsplash_AppTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Unsplash_AppTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		97F3095D3E2B8341E63625B9 /* Pods-Unsplash App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Unsplash App.debug.xcconfig"; path = "Target Support Files/Pods-Unsplash App/Pods-Unsplash App.debug.xcconfig"; sourceTree = "<group>"; };
 		A6DD9BCDBEDA1C9949A58386 /* Pods-Unsplash App-Unsplash AppUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Unsplash App-Unsplash AppUITests.debug.xcconfig"; path = "Target Support Files/Pods-Unsplash App-Unsplash AppUITests/Pods-Unsplash App-Unsplash AppUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -124,6 +126,7 @@
 		5618CBF92C07D1410026D6EA /* Unsplash App */ = {
 			isa = PBXGroup;
 			children = (
+				56956C192C07E5E100470F28 /* Layout */,
 				56956C0A2C07DF1900470F28 /* Screens */,
 				5618CBFA2C07D1410026D6EA /* AppDelegate.swift */,
 				5618CBFC2C07D1410026D6EA /* SceneDelegate.swift */,
@@ -194,6 +197,14 @@
 			children = (
 			);
 			path = Data;
+			sourceTree = "<group>";
+		};
+		56956C192C07E5E100470F28 /* Layout */ = {
+			isa = PBXGroup;
+			children = (
+				56956C1A2C07E60400470F28 /* LayoutProxy.swift */,
+			);
+			path = Layout;
 			sourceTree = "<group>";
 		};
 		8932F778F1CDC4B51FF11B15 /* Frameworks */ = {
@@ -426,6 +437,7 @@
 				5618CBFF2C07D1410026D6EA /* ViewController.swift in Sources */,
 				5618CBFB2C07D1410026D6EA /* AppDelegate.swift in Sources */,
 				56956C0F2C07DF9000470F28 /* PhotosDashboardViewController.swift in Sources */,
+				56956C1B2C07E60400470F28 /* LayoutProxy.swift in Sources */,
 				56956C182C07E00800470F28 /* PhotosDashboardDescriptorMapper.swift in Sources */,
 				5618CBFD2C07D1410026D6EA /* SceneDelegate.swift in Sources */,
 				56956C162C07DFF700470F28 /* PhotosDashboardViewDescriptor.swift in Sources */,
