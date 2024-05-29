@@ -16,6 +16,10 @@
 		5618CC122C07D1430026D6EA /* Unsplash_AppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5618CC112C07D1430026D6EA /* Unsplash_AppTests.swift */; };
 		5618CC1C2C07D1430026D6EA /* Unsplash_AppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5618CC1B2C07D1430026D6EA /* Unsplash_AppUITests.swift */; };
 		5618CC1E2C07D1430026D6EA /* Unsplash_AppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5618CC1D2C07D1430026D6EA /* Unsplash_AppUITestsLaunchTests.swift */; };
+		56956C0F2C07DF9000470F28 /* PhotosDashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56956C0E2C07DF9000470F28 /* PhotosDashboardViewController.swift */; };
+		56956C142C07DFC700470F28 /* PhotosDashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56956C132C07DFC700470F28 /* PhotosDashboardViewModel.swift */; };
+		56956C162C07DFF700470F28 /* PhotosDashboardViewDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56956C152C07DFF700470F28 /* PhotosDashboardViewDescriptor.swift */; };
+		56956C182C07E00800470F28 /* PhotosDashboardDescriptorMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56956C172C07E00800470F28 /* PhotosDashboardDescriptorMapper.swift */; };
 		5979B634A1EE944B2F93FEFD /* Pods_Unsplash_AppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E9F78D7B826EB11DDE3B91 /* Pods_Unsplash_AppTests.framework */; };
 		BFA4D0728BC7013D670E8891 /* Pods_Unsplash_App_Unsplash_AppUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF72B650D284A893FACCC8B3 /* Pods_Unsplash_App_Unsplash_AppUITests.framework */; };
 		E9D5BF37F851AAD19431FB96 /* Pods_Unsplash_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00371CBF8DCEFD661F2BC7C4 /* Pods_Unsplash_App.framework */; };
@@ -55,6 +59,10 @@
 		5618CC172C07D1430026D6EA /* Unsplash AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Unsplash AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5618CC1B2C07D1430026D6EA /* Unsplash_AppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Unsplash_AppUITests.swift; sourceTree = "<group>"; };
 		5618CC1D2C07D1430026D6EA /* Unsplash_AppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Unsplash_AppUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		56956C0E2C07DF9000470F28 /* PhotosDashboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosDashboardViewController.swift; sourceTree = "<group>"; };
+		56956C132C07DFC700470F28 /* PhotosDashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosDashboardViewModel.swift; sourceTree = "<group>"; };
+		56956C152C07DFF700470F28 /* PhotosDashboardViewDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosDashboardViewDescriptor.swift; sourceTree = "<group>"; };
+		56956C172C07E00800470F28 /* PhotosDashboardDescriptorMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosDashboardDescriptorMapper.swift; sourceTree = "<group>"; };
 		59E9F78D7B826EB11DDE3B91 /* Pods_Unsplash_AppTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Unsplash_AppTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		97F3095D3E2B8341E63625B9 /* Pods-Unsplash App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Unsplash App.debug.xcconfig"; path = "Target Support Files/Pods-Unsplash App/Pods-Unsplash App.debug.xcconfig"; sourceTree = "<group>"; };
 		A6DD9BCDBEDA1C9949A58386 /* Pods-Unsplash App-Unsplash AppUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Unsplash App-Unsplash AppUITests.debug.xcconfig"; path = "Target Support Files/Pods-Unsplash App-Unsplash AppUITests/Pods-Unsplash App-Unsplash AppUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -116,6 +124,7 @@
 		5618CBF92C07D1410026D6EA /* Unsplash App */ = {
 			isa = PBXGroup;
 			children = (
+				56956C0A2C07DF1900470F28 /* Screens */,
 				5618CBFA2C07D1410026D6EA /* AppDelegate.swift */,
 				5618CBFC2C07D1410026D6EA /* SceneDelegate.swift */,
 				5618CBFE2C07D1410026D6EA /* ViewController.swift */,
@@ -144,6 +153,49 @@
 			path = "Unsplash AppUITests";
 			sourceTree = "<group>";
 		};
+		56956C0A2C07DF1900470F28 /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				56956C0B2C07DF2C00470F28 /* PhotosDashboard */,
+			);
+			path = Screens;
+			sourceTree = "<group>";
+		};
+		56956C0B2C07DF2C00470F28 /* PhotosDashboard */ = {
+			isa = PBXGroup;
+			children = (
+				56956C122C07DFB000470F28 /* Data */,
+				56956C112C07DFA900470F28 /* Domain */,
+				56956C102C07DF9E00470F28 /* Presentation */,
+			);
+			path = PhotosDashboard;
+			sourceTree = "<group>";
+		};
+		56956C102C07DF9E00470F28 /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				56956C0E2C07DF9000470F28 /* PhotosDashboardViewController.swift */,
+				56956C132C07DFC700470F28 /* PhotosDashboardViewModel.swift */,
+				56956C152C07DFF700470F28 /* PhotosDashboardViewDescriptor.swift */,
+				56956C172C07E00800470F28 /* PhotosDashboardDescriptorMapper.swift */,
+			);
+			path = Presentation;
+			sourceTree = "<group>";
+		};
+		56956C112C07DFA900470F28 /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		56956C122C07DFB000470F28 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
 		8932F778F1CDC4B51FF11B15 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -164,7 +216,6 @@
 				41644284ED193D8B943C4B00 /* Pods-Unsplash AppTests.debug.xcconfig */,
 				E86DA236F23F527F3A82F8D3 /* Pods-Unsplash AppTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -371,9 +422,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				56956C142C07DFC700470F28 /* PhotosDashboardViewModel.swift in Sources */,
 				5618CBFF2C07D1410026D6EA /* ViewController.swift in Sources */,
 				5618CBFB2C07D1410026D6EA /* AppDelegate.swift in Sources */,
+				56956C0F2C07DF9000470F28 /* PhotosDashboardViewController.swift in Sources */,
+				56956C182C07E00800470F28 /* PhotosDashboardDescriptorMapper.swift in Sources */,
 				5618CBFD2C07D1410026D6EA /* SceneDelegate.swift in Sources */,
+				56956C162C07DFF700470F28 /* PhotosDashboardViewDescriptor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
