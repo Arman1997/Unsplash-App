@@ -29,6 +29,13 @@ final class PhotosDashboardViewController: UIViewController, UICollectionViewDel
         
         return cell
     }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if indexPath.item == photos.count - 1 {
+
+        }
+    }
+    
     let refreshControl = UIRefreshControl()
     lazy var collectionView: UICollectionView = {
         let collectionViewLayout = CustomCollectionViewLayout()
@@ -255,4 +262,60 @@ func addShadowToView(view : UIView, value: CGFloat) {
 func addCornerToView (view : UIView, value: CGFloat) {
     view.layer.cornerRadius = value
     view.clipsToBounds = true
+}
+
+
+
+func getData(page: Int) {
+
+    // 1. Create the base URL
+    guard var urlComponents = URLComponents(string: "https://api.unsplash.com/photos/random/") else {
+        fatalError("Invalid URL")
+    }
+
+    // 2. Define the query parameters
+    let queryItems = [
+        URLQueryItem(name: "client_id", value: "EvILfIMijnKKj240kEwvZBrFPvdI9LR4Mc2LtdtlIH4"),
+        URLQueryItem(name: "page", value: String(page)),
+        URLQueryItem(name: "per_page", value: "20"),
+    ]
+
+    // 3. Add the query parameters to the URL
+    urlComponents.queryItems = queryItems
+
+    // 4. Get the final URL with the query parameters
+    guard let url = urlComponents.url else {
+        fatalError("Unable to get URL with query parameters")
+    }
+
+    // 5. Create a URLRequest
+    var request = URLRequest(url: url)
+    request.httpMethod = "GET"
+
+    // 6. Create the URLSession
+    let session = URLSession.shared
+
+    // 7. Create the data task
+    let task = session.dataTask(with: request) { data, response, error in
+        if let error = error {
+            print("Error: \(error)")
+            return
+        }
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              (200...299).contains(httpResponse.statusCode) else {
+            print("Server error")
+            return
+        }
+
+        if let data = data {
+            // Handle the data (e.g., parse JSON)
+            let str = String(decoding: data, as: UTF8.self)
+            print(str)
+            print("Data: \(data)")
+        }
+    }
+
+    // 8. Start the task
+    task.resume()
 }

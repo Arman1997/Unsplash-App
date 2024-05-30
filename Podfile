@@ -4,7 +4,7 @@ target 'Unsplash App' do
 
   use_frameworks!
   
-  
+  pod 'UnsplashPhotoPicker', '~> 1.3'
   # Pods for Unsplash App
 
   target 'Unsplash AppTests' do
