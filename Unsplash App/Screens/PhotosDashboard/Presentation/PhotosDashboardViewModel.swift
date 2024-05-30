@@ -24,6 +24,7 @@ struct PhotosDashboardViewModel {
     struct Input {
         let viewDidLoaded: Observable<Void>
         let searchText: Observable<String>
+        let searchButtonTapped: Observable<Void>
         let selectedImageIndex: Observable<Int>
         let pulledToRefresh: Observable<Void>
         let nextPageRequested: Observable<Void>
@@ -58,22 +59,30 @@ struct PhotosDashboardViewModel {
     func transform(input: Input) -> Output {
         
         let pageIndex = BehaviorSubject(value: Constants.initialPage)
+        let photos = BehaviorSubject(value: [Photo]())
+        
         let loadFirstPageOnPull = input
             .pulledToRefresh
             .map { Constants.initialPage }
+            .debug()
             .do(onNext: pageIndex.onNext)
         
         let loadNextPage = input
             .nextPageRequested
+            .debounce(RxTimeInterval.seconds(2), scheduler: MainScheduler.asyncInstance)
             .withLatestFrom(pageIndex)
+            
             .map { $0 + 1 }
             .do(onNext: pageIndex.onNext)
         
-        let page = pageIndex
-            .distinctUntilChanged()
-            .filter { $0 <= Constants.maxPageCount }
+        let searchText = input.searchText.startWith("")
         
-        let photosResponse = page.flatMapFirst(useCases.getPhotos.execute).share()
+        let photosResponse = Observable.merge(
+            pageIndex.withLatestFrom(searchText) { ($0,$1) },
+            input.searchButtonTapped.withLatestFrom(pageIndex).withLatestFrom(searchText) { ($0,$1) }
+        )
+            .flatMapFirst(useCases.getPhotos.execute).share()
+            .debug()
         
         let photosSuccess = photosResponse.flatMap { result in
             switch result {
@@ -93,20 +102,47 @@ struct PhotosDashboardViewModel {
             }
         }
         
-        let descriptor = photosSuccess.map(mappers.descriptor.map)
+        let firstPagePhotos = photosSuccess
+            .withLatestFrom(pageIndex) { ($0,$1) }
+            .filter { $0.1 == Constants.initialPage }
+            .map { $0.0 }
+            .do(onNext: {
+                photos.onNext($0)
+            })
+
+        let nextPagePhotos = photosSuccess
+            .withLatestFrom(pageIndex) { ($0,$1) }
+            .filter { $0.1 > Constants.initialPage }
+            .map { $0.0 }
+            .withLatestFrom(photos) { ($0,$1) }
+            .do(onNext: {
+                photos.onNext($1 + $0)
+            })
         
         let loading = Observable<Bool>.merge(
             input.viewDidLoaded.mapTo(true),
             loadFirstPageOnPull.mapTo(true),
             input.nextPageRequested.mapTo(true),
-            photosResponse.mapTo(false)
+            photosResponse.mapTo(false),
+            input.searchButtonTapped.mapTo(true)
         )
         
-        let descriptorState = descriptor.map(ViewState.loaded)
+        let loadedState = photos
+            .withLatestFrom(pageIndex, resultSelector: {($0,$1)})
+            .filter { $0.1 == Constants.initialPage }
+            .map { $0.0 }.map(mappers.descriptor.map)
+            .map(ViewState.loaded)
+
+        let nextPageState = photos
+            .withLatestFrom(pageIndex, resultSelector: {($0,$1)})
+            .filter { $0.1 > Constants.initialPage }
+            .map { $0.0 }.map(mappers.descriptor.map)
+            .map(ViewState.nextPage)
+        
         let loadingState = loading.map(ViewState.loading)
         let errorState = photosFailure.map(ViewState.error)
         
-        let state = Observable.merge(descriptorState, loadingState, errorState)
+        let state = Observable.merge(nextPageState, loadingState, errorState, loadedState)
         
         let navigateToPhotosDetails = input.selectedImageIndex.withLatestFrom(photosSuccess) { $1[$0] }
         
@@ -115,7 +151,9 @@ struct PhotosDashboardViewModel {
             navigateToPhotoDetails: navigateToPhotosDetails,
             actions: Observable.merge([
                 loadFirstPageOnPull.mapToVoid(),
-                loadNextPage.mapToVoid()
+                loadNextPage.mapToVoid(),
+                firstPagePhotos.mapToVoid(),
+                nextPagePhotos.mapToVoid()
             ])
         )
     }

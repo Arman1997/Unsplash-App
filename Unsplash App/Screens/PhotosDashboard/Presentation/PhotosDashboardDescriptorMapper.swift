@@ -14,48 +14,20 @@ protocol PhotosDashboardViewDescriptorMapperType {
 }
 
 struct PhotosDashboardViewDescriptorMapper: PhotosDashboardViewDescriptorMapperType {
+    private let networkServiceType: NetworkingServiceType = NetworkingService()
+    
     func map(_ photos: [Photo]) -> PhotosDashboardViewDescriptor {
         PhotosDashboardViewDescriptor(
-            images: mockphotos.enumerated().map { (index, mockPhoto) in
-                PhotoCellDescriptor(
-                    imageChannel: Observable<Int>.timer(RxTimeInterval.milliseconds( Int.random(in: 300...400) ), scheduler: SerialDispatchQueueScheduler(qos: .background)).map { _ in return mockPhoto }.startWith(UIImage.strokedCheckmark),
-                    imageHeight: mockPhoto.size.height,
-                    imageId: String(index)
-                )
-            }
+            images: photos.map(mapCellDescriptor)
+        )
+    }
+    
+    func mapCellDescriptor(fromPhoto photo: Photo) -> PhotoCellDescriptor {
+        .init(
+            imageChannel: networkServiceType.getImage(photo.url),
+            imageHeight: photo.height,
+            imageWidth: photo.width,
+            imageId: photo.id
         )
     }
 }
-
-private let mockphotos: [UIImage] = [
-    UIImage.image0,
-    UIImage.image1,
-    UIImage.image2,
-    UIImage.image3,
-    UIImage.image4,
-    UIImage.image0,
-    UIImage.image1,
-    UIImage.image2,
-    UIImage.image3,
-    UIImage.image4,
-    UIImage.image0,
-    UIImage.image1,
-    UIImage.image2,
-    UIImage.image3,
-    UIImage.image4,
-    UIImage.image0,
-    UIImage.image1,
-    UIImage.image2,
-    UIImage.image3,
-    UIImage.image4,
-    UIImage.image0,
-    UIImage.image1,
-    UIImage.image2,
-    UIImage.image3,
-    UIImage.image4,
-    UIImage.image0,
-    UIImage.image1,
-    UIImage.image2,
-    UIImage.image3,
-    UIImage.image4,
-]

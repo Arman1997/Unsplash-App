@@ -8,4 +8,7 @@
 import Foundation
 
 
-enum PhotoError: Error {}
+enum PhotoError: Error {
+    case invalidResponse
+    case with(Error)
+}

@@ -9,5 +9,6 @@ import Foundation
 
 
 struct RequestData {
-    
+    let urlString: String
+    let queryItems: [URLQueryItem]
 }

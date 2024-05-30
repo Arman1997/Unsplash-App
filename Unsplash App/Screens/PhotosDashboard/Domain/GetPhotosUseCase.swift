@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 
 protocol GetPhotosUseCaseType {
-    func execute(page: Int) -> Observable<Result<[Photo], PhotoError>>
+    func execute(page: Int, searchText: String) -> Observable<Result<[Photo], PhotoError>>
 }
 
 struct GetPhotosUseCase: GetPhotosUseCaseType {
@@ -19,7 +19,7 @@ struct GetPhotosUseCase: GetPhotosUseCaseType {
         self.photosRepository = photosRepository
     }
     
-    func execute(page: Int) -> Observable<Result<[Photo], PhotoError>> {
-        photosRepository.getPhotos(page: page)
+    func execute(page: Int, searchText: String) -> Observable<Result<[Photo], PhotoError>> {
+        photosRepository.getPhotos(page: page, searchText: searchText)
     }
 }

@@ -11,5 +11,6 @@ import RxSwift
 struct PhotoCellDescriptor {
     let imageChannel: Observable<UIImage>
     let imageHeight: CGFloat
+    let imageWidth: CGFloat
     let imageId: String
 }

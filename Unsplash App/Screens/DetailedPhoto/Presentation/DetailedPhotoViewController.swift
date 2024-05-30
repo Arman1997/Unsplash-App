@@ -68,6 +68,7 @@ class DetailedPhotoViewController: UIViewController {
     func setupView() {
         self.title = "Photo details"
         loadingActivity.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(loadingActivity)
         loadingActivity.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         loadingActivity.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         
@@ -78,7 +79,5 @@ class DetailedPhotoViewController: UIViewController {
             $0.trailing == view.safeAreaLayoutGuide.trailingAnchor - 8.0
             $0.bottom == view.safeAreaLayoutGuide.bottomAnchor - UIScreen.main.bounds.height / 2.0
         }
-        
-        view.addSubview(loadingActivity)
     }
 }

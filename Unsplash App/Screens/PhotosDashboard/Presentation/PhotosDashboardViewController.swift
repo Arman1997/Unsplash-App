@@ -16,11 +16,11 @@ final class PhotosDashboardViewController: UIViewController {
     private let disposeBag: DisposeBag = DisposeBag()
     private let refreshControl = UIRefreshControl()
     private var photos: [PhotoCellDescriptor] = [PhotoCellDescriptor]()
-    private let loadingActivity: UIActivityIndicatorView = UIActivityIndicatorView(style: .medium)
+    private let loadingActivity: UIActivityIndicatorView = UIActivityIndicatorView(style: .large)
     private let cachedImages = NSCache<NSString,UIImage>()
+    private let collectionViewLayout = CustomCollectionViewLayout()
     
     lazy var collectionView: UICollectionView = {
-        let collectionViewLayout = CustomCollectionViewLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -36,6 +36,7 @@ final class PhotosDashboardViewController: UIViewController {
         static let selectedImageIndex = PublishSubject<Int>()
         static let pulledToRefresh = PublishSubject<Void>()
         static let nextPageRequested = PublishSubject<Void>()
+        static let searchButtonTapped = PublishSubject<Void>()
     }
     
     init(viewModel: PhotosDashboardViewModel = PhotosDashboardViewModel()) {
@@ -66,6 +67,13 @@ private extension PhotosDashboardViewController {
           layout.delegate = self
         }
         
+        loadingActivity.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(loadingActivity)
+        loadingActivity.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        loadingActivity.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        loadingActivity.color = UIColor.black
+        
+        
         self.view.backgroundColor = UIColor.white
         self.title = "Unsplash photos"
         view.addSubview(collectionView)
@@ -80,7 +88,6 @@ private extension PhotosDashboardViewController {
         search.delegate = self
         search.searchBar.delegate = self
         self.navigationItem.searchController = search
-        view.addSubview(loadingActivity)
     }
     
     func bindViewModel() {
@@ -88,6 +95,7 @@ private extension PhotosDashboardViewController {
             input: .init(
                 viewDidLoaded: Inputs.viewDidLoaded,
                 searchText: Inputs.searchText,
+                searchButtonTapped: Inputs.searchButtonTapped,
                 selectedImageIndex: Inputs.selectedImageIndex,
                 pulledToRefresh: Inputs.pulledToRefresh,
                 nextPageRequested: Inputs.nextPageRequested
@@ -96,25 +104,32 @@ private extension PhotosDashboardViewController {
         
         output
             .state
+            .observe(on: MainScheduler.asyncInstance)
             .subscribe(onNext: { [weak self] state in
                 guard let `self` = self else { return }
                 
                 switch state {
                 case .loading(let isLoading):
+                    view.bringSubviewToFront(loadingActivity)
                     isLoading ? loadingActivity.startAnimating() : loadingActivity.stopAnimating()
                 case .loaded(let descriptor):
-                    self.cachedImages.removeAllObjects()
                     self.photos = descriptor.images
+                    self.collectionViewLayout.cache.removeAll()
                     self.collectionView.reloadData()
+                    self.collectionView.collectionViewLayout.invalidateLayout()
+                    self.collectionView.layoutIfNeeded()
+                    self.collectionView.invalidateIntrinsicContentSize()
                 case .error(let error):
                     return
                 case .nextPage(let descriptor):
-                    let lastIndex = photos.count - 1
-                    photos = descriptor.images
-                    self.collectionView.performBatchUpdates { [weak self] in
-                        guard let `self` = self else { return }
-                        self.collectionView.insertItems(at: [IndexPath.init(row: lastIndex, section: 0)])
+                    let indexesToUpdate = (self.photos.count ... descriptor.images.count - 1).map { IndexPath.init(row: $0, section: 0) }
+                    self.photos = descriptor.images
+                    self.collectionViewLayout.cache.removeAll()
+                    self.collectionView.performBatchUpdates {
+                        self.collectionView.insertItems(at: indexesToUpdate)
                     }
+                    self.collectionView.collectionViewLayout.invalidateLayout()
+                    self.collectionView.invalidateIntrinsicContentSize()
                     return
                 }
             })
@@ -200,7 +215,7 @@ extension PhotosDashboardViewController: UISearchControllerDelegate {
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        print("")
+        Inputs.searchButtonTapped.onNext(())
     }
 }
 
@@ -212,7 +227,10 @@ extension PhotosDashboardViewController: UISearchBarDelegate {
 
 extension PhotosDashboardViewController: CustomLayoutDelegate {
   func collectionView(_ collectionView: UICollectionView, heightForPhotoAtIndexPath indexPath:IndexPath) -> CGFloat {
-      return photos[indexPath.item].imageHeight
+      let photo = photos[indexPath.item]
+      let width = (UIScreen.main.bounds.width -  16.0 - 6) / 2.0
+      let height = photo.imageHeight / (photo.imageWidth / width)
+      return height
   }
 }
 
@@ -228,7 +246,7 @@ class CustomCollectionViewLayout: UICollectionViewLayout {
     
     private let numberOfColumns = 2
     private let cellPadding: CGFloat = 6
-    private var cache: [UICollectionViewLayoutAttributes] = []
+    var cache: [UICollectionViewLayoutAttributes] = []
     private var contentHeight: CGFloat = 0
     private var contentWidth: CGFloat {
       guard let collectionView = collectionView else {
@@ -348,58 +366,3 @@ func addCornerToView (view : UIView, value: CGFloat) {
     view.clipsToBounds = true
 }
 
-
-
-func getData(page: Int) {
-
-    // 1. Create the base URL
-    guard var urlComponents = URLComponents(string: "https://api.unsplash.com/photos/random/") else {
-        fatalError("Invalid URL")
-    }
-
-    // 2. Define the query parameters
-    let queryItems = [
-        URLQueryItem(name: "client_id", value: "EvILfIMijnKKj240kEwvZBrFPvdI9LR4Mc2LtdtlIH4"),
-        URLQueryItem(name: "page", value: String(page)),
-        URLQueryItem(name: "per_page", value: "20"),
-    ]
-
-    // 3. Add the query parameters to the URL
-    urlComponents.queryItems = queryItems
-
-    // 4. Get the final URL with the query parameters
-    guard let url = urlComponents.url else {
-        fatalError("Unable to get URL with query parameters")
-    }
-
-    // 5. Create a URLRequest
-    var request = URLRequest(url: url)
-    request.httpMethod = "GET"
-
-    // 6. Create the URLSession
-    let session = URLSession.shared
-
-    // 7. Create the data task
-    let task = session.dataTask(with: request) { data, response, error in
-        if let error = error {
-            print("Error: \(error)")
-            return
-        }
-
-        guard let httpResponse = response as? HTTPURLResponse,
-              (200...299).contains(httpResponse.statusCode) else {
-            print("Server error")
-            return
-        }
-
-        if let data = data {
-            // Handle the data (e.g., parse JSON)
-            let str = String(decoding: data, as: UTF8.self)
-            print(str)
-            print("Data: \(data)")
-        }
-    }
-
-    // 8. Start the task
-    task.resume()
-}
