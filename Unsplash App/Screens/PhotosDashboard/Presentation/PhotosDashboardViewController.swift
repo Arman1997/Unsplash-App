@@ -70,10 +70,10 @@ private extension PhotosDashboardViewController {
         self.title = "Unsplash photos"
         view.addSubview(collectionView)
         collectionView.layout {
-            $0.top == view.safeAreaLayoutGuide.topAnchor
-            $0.bottom == view.safeAreaLayoutGuide.bottomAnchor
-            $0.leading == view.safeAreaLayoutGuide.leadingAnchor
-            $0.trailing == view.safeAreaLayoutGuide.trailingAnchor
+            $0.top == view.safeAreaLayoutGuide.topAnchor + 24.0
+            $0.bottom == view.safeAreaLayoutGuide.bottomAnchor - 24.0
+            $0.leading == view.safeAreaLayoutGuide.leadingAnchor + 8.0
+            $0.trailing == view.safeAreaLayoutGuide.trailingAnchor - 8.0
         }
         
         let search = UISearchController(searchResultsController: nil)
@@ -100,17 +100,13 @@ private extension PhotosDashboardViewController {
                 guard let `self` = self else { return }
                 
                 switch state {
-                case .loading:
-                    loadingActivity.startAnimating()
-                    return
+                case .loading(let isLoading):
+                    isLoading ? loadingActivity.startAnimating() : loadingActivity.stopAnimating()
                 case .loaded(let descriptor):
                     self.cachedImages.removeAllObjects()
                     self.photos = descriptor.images
                     self.collectionView.reloadData()
-                    loadingActivity.stopAnimating()
-                    return
                 case .error(let error):
-                    loadingActivity.stopAnimating()
                     return
                 case .nextPage(let descriptor):
                     let lastIndex = photos.count - 1
@@ -119,11 +115,41 @@ private extension PhotosDashboardViewController {
                         guard let `self` = self else { return }
                         self.collectionView.insertItems(at: [IndexPath.init(row: lastIndex, section: 0)])
                     }
-                    loadingActivity.stopAnimating()
                     return
                 }
             })
             .disposed(by: disposeBag)
+        
+        output
+            .navigateToPhotoDetails
+            .subscribe(onNext: { [weak self] photoData in
+                guard let `self` = self, 
+                let navController = self.navigationController else {
+                    return
+                }
+
+                navController
+                    .pushViewController(
+                        DetailedPhotoViewController(
+                            DetailedPhotoViewModel(
+                                useCases: DetailedPhotoViewModel.UseCases(
+                                    isFavoriteUseCase: IsFavoriteUseCase(),
+                                    saveFavorite: SaveFavoriteUseCase(),
+                                    removeFavorite: RemoveFavoriteUseCase(),
+                                    getBigSizedPhoto: GetBigSizedPhotoUseCase()
+                                ),
+                                mappers: DetailedPhotoViewModel.Mappers(
+                                    descriptor: DetailedPhotoDescriptorMapper()
+                                ),
+                                configs: DetailedPhotoViewModel.Configs(
+                                    photo: photoData
+                                )
+                            )
+                        ),
+                        animated: true
+                    )
+
+            }).disposed(by: disposeBag)
         
         output
             .actions
@@ -150,7 +176,7 @@ extension PhotosDashboardViewController: UICollectionViewDelegate, UICollectionV
         if let cachedVersion = self.cachedImages.object(forKey: NSString(string: photoData.imageId)) {
             cell.imageView.image = cachedVersion
         } else {
-            photoData.imageChannel.subscribe(onNext: { [weak self, weak cell] image in
+            photoData.imageChannel.observe(on: MainScheduler.asyncInstance).subscribe(onNext: { [weak self, weak cell] image in
                 guard let `self` = self, let cell = cell else { return }
                 cell.imageView.image = image
                 self.cachedImages.setObject(image, forKey: NSString(string: photoData.imageId))
@@ -162,7 +188,7 @@ extension PhotosDashboardViewController: UICollectionViewDelegate, UICollectionV
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if indexPath.item == photos.count - 1 {
+        if indexPath.row == photos.count - 1 {
             Inputs.nextPageRequested.onNext(())
         }
     }
@@ -171,6 +197,10 @@ extension PhotosDashboardViewController: UICollectionViewDelegate, UICollectionV
 extension PhotosDashboardViewController: UISearchControllerDelegate {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         Inputs.searchText.onNext("")
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        print("")
     }
 }
 

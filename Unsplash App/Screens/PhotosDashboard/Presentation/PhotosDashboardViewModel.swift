@@ -10,7 +10,7 @@ import RxSwift
 
 struct PhotosDashboardViewModel {
     enum ViewState {
-        case loading
+        case loading(Bool)
         case loaded(PhotosDashboardViewDescriptor)
         case nextPage(PhotosDashboardViewDescriptor)
         case error(PhotoError)
@@ -73,54 +73,60 @@ struct PhotosDashboardViewModel {
             .distinctUntilChanged()
             .filter { $0 <= Constants.maxPageCount }
         
-        let descriptorRequest = page.flatMapFirst { value in
-            return useCases.getPhotos.execute(page: value)
-        }
-        .share()
+        let photosResponse = page.flatMapFirst(useCases.getPhotos.execute).share()
         
-        let descriptor = descriptorRequest
-        .flatMap { result in
+        let photosSuccess = photosResponse.flatMap { result in
             switch result {
             case .success(let photos):
-                return Observable.of(mappers.descriptor.map(photos))
+                return Observable.of(photos)
             case .failure:
                 return Observable.empty()
             }
         }
         
-        let error: Observable<PhotoError?> = descriptorRequest
-            .map { result in
-                switch result {
-                case .success:
-                    return nil
-                case .failure(let error):
-                    return error
-                }
+        let photosFailure = photosResponse.flatMap { result in
+            switch result {
+            case .failure(let error):
+                return Observable.of(error)
+            case .success:
+                return Observable.empty()
             }
+        }
+        
+        let descriptor = photosSuccess.map(mappers.descriptor.map)
         
         let loading = Observable<Bool>.merge(
-            input.viewDidLoaded.map { _ in true },
-            loadFirstPageOnPull.map { _ in true },
-            input.nextPageRequested.map { _ in true },
-            descriptorRequest.map { _ in false },
-            error.filter { $0 != nil } .map { _ in false }
+            input.viewDidLoaded.mapTo(true),
+            loadFirstPageOnPull.mapTo(true),
+            input.nextPageRequested.mapTo(true),
+            photosResponse.mapTo(false)
         )
         
-        let descriptorState = descriptor.map { ViewState.loaded($0) }
-        let loadingState = loading.map { _ in ViewState.loading }
-        let errorState = error
-            .filter { $0 != nil }
-            .map { ViewState.error($0!) }
+        let descriptorState = descriptor.map(ViewState.loaded)
+        let loadingState = loading.map(ViewState.loading)
+        let errorState = photosFailure.map(ViewState.error)
         
         let state = Observable.merge(descriptorState, loadingState, errorState)
         
+        let navigateToPhotosDetails = input.selectedImageIndex.withLatestFrom(photosSuccess) { $1[$0] }
+        
         return Output(
             state: state,
-            navigateToPhotoDetails: Observable<Photo>.empty(),
+            navigateToPhotoDetails: navigateToPhotosDetails,
             actions: Observable.merge([
-                loadFirstPageOnPull.map { _ in return },
-                loadNextPage.map { _ in return }
+                loadFirstPageOnPull.mapToVoid(),
+                loadNextPage.mapToVoid()
             ])
         )
+    }
+}
+
+extension Observable {
+    func mapTo<T>(_ value: T) -> Observable<T> {
+        map { _ in return value }
+    }
+    
+    func mapToVoid() -> Observable<Void> {
+        mapTo(())
     }
 }

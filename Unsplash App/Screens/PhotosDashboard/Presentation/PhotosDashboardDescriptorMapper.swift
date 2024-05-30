@@ -18,7 +18,7 @@ struct PhotosDashboardViewDescriptorMapper: PhotosDashboardViewDescriptorMapperT
         PhotosDashboardViewDescriptor(
             images: mockphotos.enumerated().map { (index, mockPhoto) in
                 PhotoCellDescriptor(
-                    imageChannel: Observable<Int>.timer(RxTimeInterval.seconds( Int.random(in: 2...4) ), scheduler: MainScheduler.asyncInstance).map { _ in return mockPhoto }.startWith(UIImage.image0),
+                    imageChannel: Observable<Int>.timer(RxTimeInterval.milliseconds( Int.random(in: 300...400) ), scheduler: SerialDispatchQueueScheduler(qos: .background)).map { _ in return mockPhoto }.startWith(UIImage.strokedCheckmark),
                     imageHeight: mockPhoto.size.height,
                     imageId: String(index)
                 )
@@ -28,6 +28,26 @@ struct PhotosDashboardViewDescriptorMapper: PhotosDashboardViewDescriptorMapperT
 }
 
 private let mockphotos: [UIImage] = [
+    UIImage.image0,
+    UIImage.image1,
+    UIImage.image2,
+    UIImage.image3,
+    UIImage.image4,
+    UIImage.image0,
+    UIImage.image1,
+    UIImage.image2,
+    UIImage.image3,
+    UIImage.image4,
+    UIImage.image0,
+    UIImage.image1,
+    UIImage.image2,
+    UIImage.image3,
+    UIImage.image4,
+    UIImage.image0,
+    UIImage.image1,
+    UIImage.image2,
+    UIImage.image3,
+    UIImage.image4,
     UIImage.image0,
     UIImage.image1,
     UIImage.image2,
