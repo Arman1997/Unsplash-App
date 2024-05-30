@@ -23,7 +23,7 @@ class DetailedPhotoViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "Photo details"
-        view.backgroundColor = .white
+        
         
         
         let imageView = UIImageView()

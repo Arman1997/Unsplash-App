@@ -6,3 +6,8 @@
 //
 
 import Foundation
+import RxCocoa
+
+struct PhotosDashboardViewDescriptor {
+    let images: [PhotoCellDescriptor]
+}
