@@ -9,6 +9,11 @@ import Foundation
 import UIKit
 
 final class PhotosDashboardViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        self.navigationController?.pushViewController(DetailedPhotoViewController(image: photos[indexPath.row]), animated: true)
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return photos.count
     }
@@ -24,13 +29,15 @@ final class PhotosDashboardViewController: UIViewController, UICollectionViewDel
         
         return cell
     }
-    
+    let refreshControl = UIRefreshControl()
     lazy var collectionView: UICollectionView = {
         let collectionViewLayout = CustomCollectionViewLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(CustomCollectionViewCell.self, forCellWithReuseIdentifier: CustomCollectionViewCell.identifier)
+        refreshControl.addTarget(self, action: #selector(loadData), for: .valueChanged)
+        collectionView.refreshControl = refreshControl
         return collectionView
     }()
     
@@ -39,21 +46,29 @@ final class PhotosDashboardViewController: UIViewController, UICollectionViewDel
         if let layout = collectionView.collectionViewLayout as? CustomCollectionViewLayout {
           layout.delegate = self
         }
-        
+        self.view.backgroundColor = .white
         self.title = "Unsplash photos"
         
         view.addSubview(collectionView)
         collectionView.layout {
-            $0.top == view.topAnchor
-            $0.bottom == view.bottomAnchor
-            $0.leading == view.leadingAnchor
-            $0.trailing == view.trailingAnchor
+            $0.top == view.safeAreaLayoutGuide.topAnchor
+            $0.bottom == view.safeAreaLayoutGuide.bottomAnchor
+            $0.leading == view.safeAreaLayoutGuide.leadingAnchor
+            $0.trailing == view.safeAreaLayoutGuide.trailingAnchor
         }
         
         let search = UISearchController(searchResultsController: nil)
         search.delegate = self
         search.searchBar.delegate = self
         self.navigationItem.searchController = search
+        
+
+    }
+    
+    @objc
+    func loadData() {
+        print("refreshed")
+        refreshControl.endRefreshing()
     }
     
     private let photos: [UIImage] = [
