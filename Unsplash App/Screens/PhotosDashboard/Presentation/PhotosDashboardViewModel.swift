@@ -143,7 +143,7 @@ struct PhotosDashboardViewModel {
         
         let state = Observable.merge(nextPageState, loadingState, errorState, loadedState)
         
-        let navigateToPhotosDetails = input.selectedImageIndex.withLatestFrom(photosSuccess) { $1[$0] }
+        let navigateToPhotosDetails = input.selectedImageIndex.withLatestFrom(photos) { $1[$0] }
         
         return Output(
             state: state,

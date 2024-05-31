@@ -9,13 +9,13 @@ import Foundation
 import RxSwift
 
 protocol RemoveFavoriteUseCaseType {
-    func execute(_ photoId: String) -> Observable<Bool>
+    func execute(_ photo: Photo) -> Observable<Bool>
 }
 
 struct RemoveFavoriteUseCase: RemoveFavoriteUseCaseType {
     private let photoManager: PhotoManager = PhotoManager()
     
-    func execute(_ photoId: String) -> Observable<Bool> {
-        photoManager.removeImage(photoId: photoId)
+    func execute(_ photo: Photo) -> Observable<Bool> {
+        photoManager.removePhoto(photo)
     }
 }

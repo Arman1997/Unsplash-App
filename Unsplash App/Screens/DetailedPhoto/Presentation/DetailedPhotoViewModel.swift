@@ -79,24 +79,24 @@ struct DetailedPhotoViewModel {
         let favoriteButtonTap = input.favoriteButtonTapped
         
         let isFavoriteRequest = favoriteButtonTap
-            .flatMap { useCases.isFavoriteUseCase.execute(configs.photo.id) }
+            .flatMap { useCases.isFavoriteUseCase.execute(configs.photo) }
             .share()
         
         let saveFavorite = isFavoriteRequest
             .filter { !$0 }
             .mapToVoid()
-            .withLatestFrom(getBigSizedPhotoSuccess) { (configs.photo.id, $1) }
+            .withLatestFrom(getBigSizedPhotoSuccess) { (configs.photo, $1) }
             .flatMap(useCases.saveFavorite.execute)
             
 
         let removeFavorite = isFavoriteRequest
             .filter { $0 }
-            .mapTo(configs.photo.id)
+            .mapTo(configs.photo)
             .flatMap(useCases.removeFavorite.execute)
         
         let descriptor = Observable.merge(
             getBigSizedPhotoSuccess
-            .withLatestFrom(useCases.isFavoriteUseCase.execute(configs.photo.id)) { ($0,$1) }
+            .withLatestFrom(useCases.isFavoriteUseCase.execute(configs.photo)) { ($0,$1) }
             .map { (configs.photo, $0.0, $0.1) }
             .map(mappers.descriptor.map),
             
@@ -104,7 +104,7 @@ struct DetailedPhotoViewModel {
                 saveFavorite.filter { $0 },
                 removeFavorite.filter { $0 }
             )
-            .mapTo(configs.photo.id)
+            .mapTo(configs.photo)
             .flatMap(useCases.isFavoriteUseCase.execute)
             .withLatestFrom(getBigSizedPhotoSuccess)  { ($0,$1) }
             .map { (configs.photo, $0.1, $0.0) }

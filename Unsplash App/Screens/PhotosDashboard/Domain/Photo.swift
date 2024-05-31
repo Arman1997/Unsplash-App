@@ -1,7 +1,7 @@
 import Foundation
 
-struct Photo {
-    struct Urls {
+struct Photo: Codable {
+    struct Urls: Codable {
         let small: URL
         let big: URL
     }

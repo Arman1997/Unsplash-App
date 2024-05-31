@@ -194,7 +194,9 @@ extension PhotosDashboardViewController: UICollectionViewDelegate, UICollectionV
             cell.imageView.image = cachedVersion
         } else {
             photoData.imageChannel.observe(on: MainScheduler.asyncInstance).subscribe(onNext: { [weak self, weak cell] image in
-                guard let `self` = self, let cell = cell else { return }
+                guard let `self` = self, let cell = cell else {
+                    return
+                }
                 cell.imageView.image = image
                 self.cachedImages.setObject(image, forKey: NSString(string: photoData.imageId))
             })
@@ -264,9 +266,10 @@ class CustomCollectionViewLayout: UICollectionViewLayout {
     }
     
     override func prepare() {
-      guard cache.isEmpty, let collectionView = collectionView else {
+      guard let collectionView = collectionView else {
           return
       }
+     cache.removeAll()
 
       let columnWidth = contentWidth / CGFloat(numberOfColumns)
       var xOffset: [CGFloat] = []
@@ -291,20 +294,23 @@ class CustomCollectionViewLayout: UICollectionViewLayout {
       }
     }
     
-    override func layoutAttributesForElements(in rect: CGRect)
-        -> [UICollectionViewLayoutAttributes]? {
-      var visibleLayoutAttributes: [UICollectionViewLayoutAttributes] = []
-      
-      for attributes in cache {
-        if attributes.frame.intersects(rect) {
-          visibleLayoutAttributes.append(attributes)
+    override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
+        var visibleLayoutAttributes = [UICollectionViewLayoutAttributes]()
+        
+        for attributes in cache {
+            if attributes.frame.intersects(rect) {
+                visibleLayoutAttributes.append(attributes)
+            }
         }
-      }
-      return visibleLayoutAttributes
+        return visibleLayoutAttributes
     }
-    
+
     override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-      return cache[indexPath.item]
+        return cache[indexPath.item]
+    }
+
+    override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
+        return true
     }
 }
 
