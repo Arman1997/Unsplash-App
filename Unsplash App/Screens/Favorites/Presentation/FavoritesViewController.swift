@@ -41,6 +41,14 @@ class FavoritesViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        switch UIScreen.main.traitCollection.userInterfaceStyle {
+          case .dark:
+            self.view.backgroundColor = .black
+          case .light:
+            self.view.backgroundColor = .white
+        default:
+            self.view.backgroundColor = .white
+        }
         Inputs.viewDidAppear.onNext(())
     }
     

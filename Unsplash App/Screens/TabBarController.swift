@@ -9,6 +9,19 @@ import Foundation
 import UIKit
 
 class TabBarController: UITabBarController {
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        switch UIScreen.main.traitCollection.userInterfaceStyle {
+          case .dark:
+            self.view.backgroundColor = .black
+          case .light:
+            self.view.backgroundColor = .white
+        default:
+            self.view.backgroundColor = .white
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.viewControllers = [initialTabBar, finalTabBar]

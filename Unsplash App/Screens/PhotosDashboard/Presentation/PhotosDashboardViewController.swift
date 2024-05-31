@@ -56,6 +56,18 @@ final class PhotosDashboardViewController: UIViewController {
         Inputs.viewDidLoaded.onNext(())
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        switch UIScreen.main.traitCollection.userInterfaceStyle {
+          case .dark:
+            self.view.backgroundColor = .black
+          case .light:
+            self.view.backgroundColor = .white
+        default:
+            self.view.backgroundColor = .white
+        }
+    }
+    
     @objc
     func onRefresh() {
         Inputs.pulledToRefresh.onNext(())
@@ -75,8 +87,6 @@ private extension PhotosDashboardViewController {
         loadingActivity.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         loadingActivity.color = UIColor.black
         
-        
-        self.view.backgroundColor = UIColor.white
         self.title = "Unsplash photos"
         view.addSubview(collectionView)
         collectionView.layout {
