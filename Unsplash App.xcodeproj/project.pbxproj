@@ -24,6 +24,8 @@
 		56777E4A2C090459001D6624 /* RemoveFavoriteUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56777E492C090459001D6624 /* RemoveFavoriteUseCase.swift */; };
 		56777E4C2C0904CB001D6624 /* GetBigSizedPhotoUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56777E4B2C0904CB001D6624 /* GetBigSizedPhotoUseCase.swift */; };
 		56777E4E2C0909D4001D6624 /* IsFavoriteUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56777E4D2C0909D4001D6624 /* IsFavoriteUseCase.swift */; };
+		56777E512C094C89001D6624 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56777E502C094C89001D6624 /* TabBarController.swift */; };
+		56777E542C094D0B001D6624 /* FavoritesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56777E532C094D0B001D6624 /* FavoritesViewController.swift */; };
 		56956C0F2C07DF9000470F28 /* PhotosDashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56956C0E2C07DF9000470F28 /* PhotosDashboardViewController.swift */; };
 		56956C142C07DFC700470F28 /* PhotosDashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56956C132C07DFC700470F28 /* PhotosDashboardViewModel.swift */; };
 		56956C162C07DFF700470F28 /* PhotosDashboardViewDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56956C152C07DFF700470F28 /* PhotosDashboardViewDescriptor.swift */; };
@@ -87,6 +89,8 @@
 		56777E492C090459001D6624 /* RemoveFavoriteUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveFavoriteUseCase.swift; sourceTree = "<group>"; };
 		56777E4B2C0904CB001D6624 /* GetBigSizedPhotoUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetBigSizedPhotoUseCase.swift; sourceTree = "<group>"; };
 		56777E4D2C0909D4001D6624 /* IsFavoriteUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IsFavoriteUseCase.swift; sourceTree = "<group>"; };
+		56777E502C094C89001D6624 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
+		56777E532C094D0B001D6624 /* FavoritesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesViewController.swift; sourceTree = "<group>"; };
 		56956C0E2C07DF9000470F28 /* PhotosDashboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosDashboardViewController.swift; sourceTree = "<group>"; };
 		56956C132C07DFC700470F28 /* PhotosDashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosDashboardViewModel.swift; sourceTree = "<group>"; };
 		56956C152C07DFF700470F28 /* PhotosDashboardViewDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosDashboardViewDescriptor.swift; sourceTree = "<group>"; };
@@ -224,9 +228,27 @@
 			path = Data;
 			sourceTree = "<group>";
 		};
+		56777E4F2C094C74001D6624 /* TabbarController */ = {
+			isa = PBXGroup;
+			children = (
+				56777E502C094C89001D6624 /* TabBarController.swift */,
+			);
+			name = TabbarController;
+			sourceTree = "<group>";
+		};
+		56777E522C094CFC001D6624 /* Favorites */ = {
+			isa = PBXGroup;
+			children = (
+				56777E532C094D0B001D6624 /* FavoritesViewController.swift */,
+			);
+			path = Favorites;
+			sourceTree = "<group>";
+		};
 		56956C0A2C07DF1900470F28 /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				56777E522C094CFC001D6624 /* Favorites */,
+				56777E4F2C094C74001D6624 /* TabbarController */,
 				56956C2B2C08154B00470F28 /* Network */,
 				56956C1C2C07F45D00470F28 /* DetailedPhoto */,
 				56956C0B2C07DF2C00470F28 /* PhotosDashboard */,
@@ -589,8 +611,10 @@
 				5618CBFD2C07D1410026D6EA /* SceneDelegate.swift in Sources */,
 				56956C282C0814A000470F28 /* PhotoError.swift in Sources */,
 				56956C262C08132500470F28 /* GetPhotosUseCase.swift in Sources */,
+				56777E542C094D0B001D6624 /* FavoritesViewController.swift in Sources */,
 				56956C162C07DFF700470F28 /* PhotosDashboardViewDescriptor.swift in Sources */,
 				56777E4A2C090459001D6624 /* RemoveFavoriteUseCase.swift in Sources */,
+				56777E512C094C89001D6624 /* TabBarController.swift in Sources */,
 				56777E462C0903B2001D6624 /* DetailedPhotoDescriptorMapper.swift in Sources */,
 				56777E3F2C09033F001D6624 /* DetailedPhotoDescriptor.swift in Sources */,
 			);

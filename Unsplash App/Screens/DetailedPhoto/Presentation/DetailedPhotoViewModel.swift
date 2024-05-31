@@ -53,7 +53,7 @@ struct DetailedPhotoViewModel {
     func transform(_ input: Input) -> Output {
         let getBigSizedPhotoResponse = input
             .viewDidLoaded
-            .mapTo(configs.photo.id)
+            .mapTo(configs.photo.urls.big)
             .flatMap(useCases.getBigSizedPhoto.execute)
             .share()
         
@@ -65,7 +65,7 @@ struct DetailedPhotoViewModel {
             case .failure:
                 return Observable.empty()
             }
-        }
+        }.take(1)
         
         let getBigSizedPhotoFailure = getBigSizedPhotoResponse.flatMap { result in
             switch result {
@@ -76,10 +76,33 @@ struct DetailedPhotoViewModel {
             }
         }
         
-        let descriptor = getBigSizedPhotoSuccess
+        let favoriteButtonTap = input.favoriteButtonTapped
+        
+        let saveFavorite = favoriteButtonTap
+            .mapTo(configs.photo.id)
+            .flatMap(useCases.isFavoriteUseCase.execute)
+            .filter { !$0 }
+            .mapTo(configs.photo.id)
+            .flatMap(useCases.saveFavorite.execute)
+
+        let removeFavorite = favoriteButtonTap
+            .mapTo(configs.photo.id)
+            .flatMap(useCases.isFavoriteUseCase.execute)
+            .filter { $0 }
+            .mapTo(configs.photo.id)
+            .flatMap(useCases.removeFavorite.execute)
+        
+        let descriptor = Observable.merge(
+            getBigSizedPhotoSuccess
             .withLatestFrom(useCases.isFavoriteUseCase.execute(configs.photo.id)) { ($0,$1) }
             .map { (configs.photo, $0.0, $0.1) }
-            .map(mappers.descriptor.map)
+            .map(mappers.descriptor.map),
+            
+            favoriteButtonTap.mapToVoid().withLatestFrom(getBigSizedPhotoSuccess)
+            .withLatestFrom(useCases.isFavoriteUseCase.execute(configs.photo.id)) { ($0,$1) }
+                .map { (configs.photo, $0.0, $0.1) }
+                .map(mappers.descriptor.map)
+        )
         
         let loadedState = descriptor.map(ViewState.loaded)
         let loadingState = Observable.merge(
@@ -94,27 +117,12 @@ struct DetailedPhotoViewModel {
             errorState
         )
         
-        let saveFavorite = input
-            .favoriteButtonTapped
-            .mapTo(configs.photo.id)
-            .flatMap(useCases.isFavoriteUseCase.execute)
-            .filter { !$0 }
-            .mapTo(configs.photo.id)
-            .flatMap(useCases.saveFavorite.execute)
 
-        let removeFavorite = input.favoriteButtonTapped
-            .mapTo(configs.photo.id)
-            .flatMap(useCases.isFavoriteUseCase.execute)
-            .filter { $0 }
-            .mapTo(configs.photo.id)
-            .flatMap(useCases.removeFavorite.execute)
+        
         
         return Output(
             state: state,
-            actions: Observable<Void>.merge([
-                saveFavorite,
-                removeFavorite
-            ])
+            actions: Observable<Void>.empty()
         )
     }
 }

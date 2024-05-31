@@ -64,7 +64,6 @@ struct PhotosDashboardViewModel {
         let loadFirstPageOnPull = input
             .pulledToRefresh
             .map { Constants.initialPage }
-            .debug()
             .do(onNext: pageIndex.onNext)
         
         let loadNextPage = input
@@ -82,7 +81,7 @@ struct PhotosDashboardViewModel {
             input.searchButtonTapped.withLatestFrom(pageIndex).withLatestFrom(searchText) { ($0,$1) }
         )
             .flatMapFirst(useCases.getPhotos.execute).share()
-            .debug()
+            
         
         let photosSuccess = photosResponse.flatMap { result in
             switch result {

@@ -9,18 +9,13 @@ import Foundation
 import RxSwift
 
 protocol GetBigSizedPhotoUseCaseType {
-    func execute(_ photoId: String) -> Observable<Result<UIImage, DetailedPhotoError>>
+    func execute(_ url: URL) -> Observable<Result<UIImage, DetailedPhotoError>>
 }
 
 struct GetBigSizedPhotoUseCase: GetBigSizedPhotoUseCaseType {
-    func execute(_ photoId: String) -> Observable<Result<UIImage, DetailedPhotoError>> {
-        .create { observer in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                observer.onNext(.success(UIImage.image0))
-                observer.onCompleted()
-            }
-            
-            return Disposables.create()
-        }
+    private let networkService: NetworkingServiceType = NetworkingService()
+    
+    func execute(_ url: URL) -> Observable<Result<UIImage, DetailedPhotoError>> {
+        networkService.getImage(url).map { Result.success($0) }
     }
 }

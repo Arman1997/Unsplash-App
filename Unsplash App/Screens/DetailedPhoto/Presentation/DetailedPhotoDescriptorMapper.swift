@@ -15,11 +15,11 @@ protocol DetailedPhotoDescriptorMapperType {
 struct DetailedPhotoDescriptorMapper: DetailedPhotoDescriptorMapperType {
     func map(_ photo: Photo, _ bigSizedImage: UIImage, isFavorite: Bool) -> DetailedPhotoDescriptor {
         return DetailedPhotoDescriptor(
-            authorName: "Arman Galstyan",
-            dateCreated: "12/12/1997",
-            description: "Some image around city",
-            image: UIImage.image0,
-            isFavorite: false
+            authorName: photo.authorName,
+            dateCreated: photo.createdAt,
+            description: photo.description,
+            image: bigSizedImage,
+            isFavorite: isFavorite
         )
     }
 }

@@ -14,11 +14,8 @@ protocol RemoveFavoriteUseCaseType {
 
 struct RemoveFavoriteUseCase: RemoveFavoriteUseCaseType {
     func execute(_ photoId: String) -> Observable<Void> {
-        Observable<Void>.create { observer in
-            UserDefaults.standard.setValue(false, forKey: photoId)
-            observer.onNext(())
-            observer.onCompleted()
-            return Disposables.create()
-        }
+        UserDefaults.standard.setValue(false, forKey: photoId)
+        UserDefaults.standard.synchronize()
+        return Observable.of(())
     }
 }

@@ -13,12 +13,8 @@ protocol IsFavoriteUseCaseType {
 }
 
 struct IsFavoriteUseCase: IsFavoriteUseCaseType {
-    func execute(_ photoId: String) -> Observable<Bool> {
-        Observable<Bool>.create { observer in
-            let isFavorite: Bool = (UserDefaults.standard.value(forKey: photoId) as? Bool) ?? false
-            observer.onNext(isFavorite)
-            observer.onCompleted()
-            return Disposables.create()
-        }
+    func execute(_ photoId: String) -> Bool {
+        let isFavorite = UserDefaults.standard.bool(forKey: photoId)
+        return isFavorite
     }
 }

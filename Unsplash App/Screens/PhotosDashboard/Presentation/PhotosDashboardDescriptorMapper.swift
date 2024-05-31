@@ -24,7 +24,7 @@ struct PhotosDashboardViewDescriptorMapper: PhotosDashboardViewDescriptorMapperT
     
     func mapCellDescriptor(fromPhoto photo: Photo) -> PhotoCellDescriptor {
         .init(
-            imageChannel: networkServiceType.getImage(photo.url),
+            imageChannel: networkServiceType.getImage(photo.urls.small),
             imageHeight: photo.height,
             imageWidth: photo.width,
             imageId: photo.id

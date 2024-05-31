@@ -95,7 +95,7 @@ extension GetPhotoDTO {
     func toDomain() -> Photo {
         .init(
             id: id,
-            url: urls.thumb,
+            urls: .init(small: urls.small, big: urls.regular),
             authorName: user.name,
             createdAt: created_at,
             description: description ?? "",

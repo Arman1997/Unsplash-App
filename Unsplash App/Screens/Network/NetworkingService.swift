@@ -20,7 +20,7 @@ struct NetworkingService: NetworkingServiceType {
         return Observable<UIImage>.create { observer in
             session.dataTask(with: URLRequest(url: url)) { data, response, error in
                 guard let data = data, let image = UIImage(data: data) else {
-                    observer.onNext(UIImage.image0)
+                    observer.onError("no image found")
                     observer.onCompleted()
                     return
                 }

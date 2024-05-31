@@ -42,6 +42,7 @@ final class PhotosDashboardViewController: UIViewController {
     init(viewModel: PhotosDashboardViewModel = PhotosDashboardViewModel()) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: .main)
+        self.tabBarItem.image = UIImage(systemName: "rectangle.stack.fill")
     }
     
     required init?(coder: NSCoder) {
@@ -52,6 +53,7 @@ final class PhotosDashboardViewController: UIViewController {
         super.viewDidLoad()
         setupView()
         bindViewModel()
+        Inputs.viewDidLoaded.onNext(())
     }
     
     @objc
