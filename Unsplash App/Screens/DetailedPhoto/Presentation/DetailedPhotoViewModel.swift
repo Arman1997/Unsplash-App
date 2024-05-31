@@ -78,16 +78,18 @@ struct DetailedPhotoViewModel {
         
         let favoriteButtonTap = input.favoriteButtonTapped
         
-        let saveFavorite = favoriteButtonTap
-            .mapTo(configs.photo.id)
-            .flatMap(useCases.isFavoriteUseCase.execute)
+        let isFavoriteRequest = favoriteButtonTap
+            .flatMap { useCases.isFavoriteUseCase.execute(configs.photo.id) }
+            .share()
+        
+        let saveFavorite = isFavoriteRequest
             .filter { !$0 }
-            .mapTo(configs.photo.id)
+            .mapToVoid()
+            .withLatestFrom(getBigSizedPhotoSuccess) { (configs.photo.id, $1) }
             .flatMap(useCases.saveFavorite.execute)
+            
 
-        let removeFavorite = favoriteButtonTap
-            .mapTo(configs.photo.id)
-            .flatMap(useCases.isFavoriteUseCase.execute)
+        let removeFavorite = isFavoriteRequest
             .filter { $0 }
             .mapTo(configs.photo.id)
             .flatMap(useCases.removeFavorite.execute)
@@ -98,10 +100,15 @@ struct DetailedPhotoViewModel {
             .map { (configs.photo, $0.0, $0.1) }
             .map(mappers.descriptor.map),
             
-            favoriteButtonTap.mapToVoid().withLatestFrom(getBigSizedPhotoSuccess)
-            .withLatestFrom(useCases.isFavoriteUseCase.execute(configs.photo.id)) { ($0,$1) }
-                .map { (configs.photo, $0.0, $0.1) }
-                .map(mappers.descriptor.map)
+            Observable.merge(
+                saveFavorite.filter { $0 },
+                removeFavorite.filter { $0 }
+            )
+            .mapTo(configs.photo.id)
+            .flatMap(useCases.isFavoriteUseCase.execute)
+            .withLatestFrom(getBigSizedPhotoSuccess)  { ($0,$1) }
+            .map { (configs.photo, $0.1, $0.0) }
+            .map(mappers.descriptor.map)
         )
         
         let loadedState = descriptor.map(ViewState.loaded)
@@ -122,7 +129,10 @@ struct DetailedPhotoViewModel {
         
         return Output(
             state: state,
-            actions: Observable<Void>.empty()
+            actions: Observable<Void>.merge([
+                saveFavorite.mapToVoid(),
+                removeFavorite.mapToVoid()
+            ])
         )
     }
 }

@@ -9,13 +9,13 @@ import Foundation
 import RxSwift
 
 protocol SaveFavoriteUseCaseType {
-    func execute(_ photoId: String) -> Observable<Void>
+    func execute(_ photoId: String, _ image: UIImage) -> Observable<Bool>
 }
 
 struct SaveFavoriteUseCase: SaveFavoriteUseCaseType {
-    func execute(_ photoId: String) -> Observable<Void> {
-        UserDefaults.standard.setValue(true, forKey: photoId)
-        UserDefaults.standard.synchronize()
-        return Observable.of(())
+    private let photoManager: PhotoManager = PhotoManager()
+    
+    func execute(_ photoId: String, _ image: UIImage) -> Observable<Bool> {
+        photoManager.saveImage(photoId: photoId, image: image)
     }
 }
